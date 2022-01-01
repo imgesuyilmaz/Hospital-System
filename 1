@@ -1,0 +1,140 @@
+CREATE TABLE patient (
+    patient_id INT PRIMARY KEY,
+    first_name VARCHAR(40),
+    last_name VARCHAR(40),
+    birth_day DATE,
+    sex VARCHAR(1),
+    disease VARCHAR(40),
+    drug_names VARCHAR(60),
+    doctor_id INT
+)
+
+
+CREATE TABLE doctor (
+    doctor_id INT PRIMARY KEY,
+    first_name VARCHAR(40),
+    last_name VARCHAR(40),
+    expertise VARCHAR(40),
+    branch_id INT
+)
+
+
+CREATE TABLE branchs (
+    branch_id INT PRIMARY KEY,
+    branch_name VARCHAR(40),
+    mgr_start_date DATE,
+    mgr_id INT,
+    FOREIGN KEY(mgr_id) REFERENCES doctor(doctor_id) ON DELETE SET NULL
+)
+
+ALTER TABLE patient
+ADD FOREIGN KEY(doctor_id)
+REFERENCES branchs(branch_id)
+ON DELETE SET NULL;
+
+ALTER TABLE doctor
+ADD FOREIGN KEY(branch_id) 
+REFERENCES branchs(branch_id) 
+ON DELETE SET NULL;
+
+
+CREATE TABLE diagnose(
+    patient_id INT,
+    doctor_id INT,
+    diagnose_name VARCHAR(40),
+    PRIMARY KEY(patient_id, doctor_id),
+    FOREIGN KEY(patient_id) REFERENCES patient(patient_id) ON DELETE CASCADE,
+    FOREIGN KEY(doctor_id)  REFERENCES doctor(doctor_id) ON DELETE CASCADE
+)
+
+
+
+INSERT INTO patient VALUES(3897,"Hatice","Korkmaz","1968-07-15","W","kalp yetmezligi","Digitoksin",NULL);
+INSERT INTO patient VALUES(3675,"Yelda","Alaca","1987-11-29","W","Diyabet","Glifor",NULL);
+INSERT INTO patient VALUES(3542,"Ali","Kirmi","1978-12-24","M","Diyabet","Glucophage",NULL);
+INSERT INTO patient VALUES(3748,"Merve","Manta","1953-08-18","W","Tansiyon","triamteril",NULL);
+INSERT INTO patient VALUES(3985,"Alim","Kilri","1972-02-07","M","Bradikardi","Atropin",NULL);
+INSERT INTO patient VALUES(3314,"Zilan","Yilmaz","1995-02-20","W","Hiper Tansiyon","aldacton,furomid",NULL);
+INSERT INTO patient VALUES(3412,"Emre","Dogan","2000-12-13","M","Anksiyete","Xanax",NULL);
+INSERT INTO patient VALUES(3874,"Selim","Hakli","1979-11-27","M","Hipotroid","levotiron",NULL);
+INSERT INTO patient VALUES(3105,"Hakki","Munnes","1969-02-22","M","goz iltihap","Voltaren damla",NULL);
+
+
+INSERT INTO doctor VALUES(10001,"Yelda","Ala","Deri ve Zührevi Hastalik",NULL);
+INSERT INTO doctor VALUES(10002,"Mahmut","Koca","Kadin Hastaliklari",NULL);
+INSERT INTO doctor VALUES(10003,"Ali","Kral","Uroloji",NULL);
+INSERT INTO doctor VALUES(10004,"Mehmet","Alca","Ortopedi",NULL);
+INSERT INTO doctor VALUES(10005,"Aylin","Yeni","Genel Cerrahi",NULL);
+INSERT INTO doctor VALUES(10006,"Sebnem","Kural","Enfeksiyon Hastaliklari",NULL);
+
+
+INSERT INTO branchs VALUES(1000,"Deri ve Zührevi Hastalik","2012-11-09",NULL);
+INSERT INTO branchs VALUES(1001,"Kadin Hastaliklari","2006-12-09",NULL);
+INSERT INTO branchs VALUES(1002,"Uroloji","2009-03-09",NULL);
+INSERT INTO branchs VALUES(1003,"Ortopedi","2011-07-09",NULL);
+INSERT INTO branchs VALUES(1004,"KBB","2021-02-25",NULL);
+INSERT INTO branchs VALUES(1005,"Kardiyoloji ","2016-02-19",NULL);
+INSERT INTO branchs VALUES(1006,"Fizik Tedavi","2019-08-12",NULL);
+INSERT INTO branchs VALUES(1007,"Genel Cerrahi","2015-09-09",NULL);
+INSERT INTO branchs VALUES(1008,"Goz Hastaliklari","2008-06-09",NULL);
+INSERT INTO branchs VALUES(1009,"Enfeksiyon Hastaliklari","2011-10-29",NULL);
+INSERT INTO branchs VALUES(1010,"Psikiatri","2011-11-29",NULL);
+
+INSERT INTO diagnose VALUES(3675,1005,"Diabet");
+
+UPDATE diagnose
+SET doctor_id= 10005
+WHERE patient_id= 3897;
+
+UPDATE diagnose
+SET doctor_id= 10007
+WHERE patient_id= 3675;
+
+UPDATE diagnose
+SET doctor_id= 10007
+WHERE patient_id= 3542;
+
+
+
+
+UPDATE branchs
+SET mgr_id= 5
+WHERE branch_id= 10005;
+
+UPDATE branchs
+SET mgr_id= 4
+WHERE branch_id= 10004;
+
+UPDATE branchs
+SET mgr_id= 3
+WHERE branch_id= 10003;
+
+UPDATE branchs
+SET mgr_id= 2
+WHERE branch_id= 10002;
+
+UPDATE branchs
+SET mgr_id= 1
+WHERE branch_id= 10001;
+
+
+
+UPDATE doctor
+SET branch_id= 1007
+WHERE doctor_id= 10007;
+
+UPDATE doctor
+SET branch_id= 10003
+WHERE doctor_id= 1003;
+
+
+UPDATE doctor
+SET branch_id= 10004
+WHERE doctor_id= 1004;
+
+
+
+INSERT INTO patient VALUES()
+
+
+
