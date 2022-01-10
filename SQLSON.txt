@@ -1,0 +1,359 @@
+
+
+
+CREATE TABLE hospitaldata.Patient (
+    patient_id INT PRIMARY KEY,
+    patient_name VARCHAR(40),
+    patient_surname VARCHAR(40), 
+    patient_city VARCHAR(40),        /* Istanbul, Ankara, Izmir, Bursa, ... */
+    patient_height INT,              /* 185, 176, ... */
+    paient_weight INT,               /* 75, 80, ... */   
+    patient_birthday DATE,           /* 02/03/1997 ... */
+    patient_sex VARCHAR(40),         /* Male, Female */
+    patient_phonenumber INT, 
+    patient_blood VARCHAR(40),       /* A Positive, B Negative, 0 Positive, ... */
+    patient_age INT,                 /* 25, 45, 66, ... */
+    drug_no INT, 
+    doc_id INT,
+    FOREIGN KEY (drug_no)
+        REFERENCES drugs(drug_no)
+        ON DELETE CASCADE 
+
+);
+
+ALTER TABLE hospitaldata.Patient
+ADD FOREIGN KEY (doc_id) REFERENCES doctor(doc_id);
+ALTER TABLE hospitaldata.Patient
+ADD FOREIGN KEY (doc_id) REFERENCES doctor(doctor_id);
+
+CREATE TABLE hospitaldata.Hospital (
+    hospital_id INT PRIMARY KEY, 
+    hospital_name VARCHAR(40),
+    hospital_city VARCHAR(40)
+
+);
+
+CREATE TABLE hospitaldata.Clinic (
+    clinic_no INT PRIMARY KEY,
+    clinic_name VARCHAR(40)
+);
+
+CREATE TABLE hospitaldata.Doctor (
+    /* Has a PhD and an expertise */
+    doctor_id INT PRIMARY KEY,
+    doctor_name VARCHAR(40),
+    doctor_surname VARCHAR(40), 
+    doctor_sex VARCHAR(40),
+    doctor_phone INT, 
+    clinic_no INT,  
+    hospital_id INT,
+    FOREIGN KEY (clinic_no) REFERENCES Clinic(clinic_no)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (hospital_id) REFERENCES Hospital(hospital_id)
+    ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE  hospitaldata.Visits(
+    visit_no INT PRIMARY KEY,
+    hospital_no INT,
+    hospital_name VARCHAR(40),
+    doctor_id INT,
+    patient_id INT,
+    visit_date DATE,
+    FOREIGN KEY (patient_id)
+        REFERENCES patient(patient_id)
+        ON DELETE CASCADE 
+);
+ALTER TABLE hospitaldata.Visits
+ADD FOREIGN KEY (doctor_id) REFERENCES doctor(doctor_id);
+
+CREATE TABLE hospitaldata.Pharmacy (
+    pharmacy_id INT PRIMARY KEY, 
+    pharmacy_name VARCHAR(40),       /* Zeytinburnu Pharmacy, Levent Pharmacy, Taksim Pharmacy */ 
+    pharmacy_city VARCHAR(40), 
+    pharmacy_phone INT, 
+    pharmacist_name VARCHAR(40)     /* Name of the drug seller.*/
+);
+
+CREATE TABLE hospitaldata.Prescriptions (
+    prescription_no INT PRIMARY KEY, 
+    doctor_id INT,
+    prescription_date DATE,
+    patient_id INT,
+    drug_no INT,
+    pharmacy_id INT
+
+);
+ALTER TABLE hospitaldata.Prescriptions
+ADD FOREIGN KEY (doctor_id) REFERENCES doctor(doctor_id);
+ALTER TABLE hospitaldata.Prescriptions
+ADD FOREIGN KEY (patient_id) REFERENCES patient(patient_id);
+ALTER TABLE hospitaldata.Prescriptions
+ADD FOREIGN KEY (drug_id) REFERENCES drugs(drug_id);
+ALTER TABLE hospitaldata.Prescriptions
+ADD FOREIGN KEY (pharmacy_id) REFERENCES doctor(pharmacy_id);
+
+CREATE TABLE hospitaldata.Reports (
+    report_no INT PRIMARY KEY,
+    report_type VARCHAR(40),
+    report_date DATE,
+    doctor_name VARCHAR(40),
+    doctor_id INT,
+    patient_id INT
+);
+
+ALTER TABLE hospitaldata.Reports
+ADD FOREIGN KEY (doctor_id) REFERENCES doctor(doctor_id);
+ALTER TABLE hospitaldata.reports
+ADD FOREIGN KEY (patient_id) REFERENCES patient(patient_id);
+
+CREATE TABLE hospitaldata.Diseases (
+    diagnose_no  INT PRIMARY KEY, 
+    disease_name VARCHAR(40),      
+    diagnose_date DATE,
+    doctor_id INT, 
+    patient_id INT
+);
+ALTER TABLE hospitaldata.Diseases
+ADD FOREIGN KEY (doctor_id) REFERENCES doctor(doctor_id);
+ALTER TABLE hospitaldata.Diseases
+ADD FOREIGN KEY (patient_id) REFERENCES patient(patient_id);
+
+CREATE TABLE hospitaldata.Assay (
+    assay_no INT PRIMARY KEY,  
+    assay_date DATE,
+    assay_name VARCHAR(40),       
+    hospital_id INT, 
+    patient_id INT
+);
+
+ALTER TABLE hospitaldata.Assay
+ADD FOREIGN KEY (hospital_id) REFERENCES hospital(hospital_id);
+ALTER TABLE hospitaldata.Assay
+ADD FOREIGN KEY (patient_id) REFERENCES patient(patient_id);
+
+
+CREATE TABLE hospitaldata.Vaccine_Calendar (
+    vaccination_no INT PRIMARY KEY,
+    vaccine_name VARCHAR(40),       
+    vaccination_date DATE,  
+    vaccination_dose INT, 
+    hospital_id INT, 
+    patient_id INT 
+);
+ALTER TABLE hospitaldata.Vaccine_Calendar
+ADD FOREIGN KEY (hospital_id) REFERENCES hospital(hospital_id);
+ALTER TABLE hospitaldata.Assay
+ADD FOREIGN KEY (patient_id) REFERENCES patient(patient_id);
+
+CREATE TABLE hospitaldata.Allergies (
+    allergy_name VARCHAR(40),  
+    allergy_symptom VARCHAR(40),  
+    patient_id INT 
+);
+ALTER TABLE hospitaldata.Allergies
+ADD FOREIGN KEY (patient_id) REFERENCES patient(patient_id);
+
+CREATE TABLE hospitaldata.Appointment (
+    appointment_id INT PRIMARY KEY, 
+    appointment_date DATE, 
+    hospital_id INT, 
+    clinic_name VARCHAR(40),        
+    patient_id INT
+);
+ALTER TABLE hospitaldata.Appointment
+ADD FOREIGN KEY (patient_id) REFERENCES patient(patient_id);
+ALTER TABLE hospitaldata.Appointment
+ADD FOREIGN KEY (hospital_id) REFERENCES hospital(hospital_id);
+
+CREATE TABLE hospitaldata.Surgical_Operation (
+    surgical_no INT PRIMARY KEY, 
+    surgical_date DATE,   
+    surgery_name VARCHAR(40),     
+    patient_id INT,      
+    doctor_id INT,
+    surgery_case VARCHAR(40)     /* Y or N */
+);
+
+ALTER TABLE hospitaldata.Surgical_Operation
+ADD FOREIGN KEY (patient_id) REFERENCES patient(patient_id);
+ALTER TABLE hospitaldata.Surgical_Operation
+ADD FOREIGN KEY (doctor_id) REFERENCES doctor(doctor_id);
+
+
+CREATE TABLE hospitaldata.hospitalappointment (
+    hospital_id INT,      
+    patient_id INT,
+    appointment_date DATE,
+    PRIMARY KEY(hospital_id, patient_id)
+);
+ALTER TABLE hospitaldata.hospitalappointment
+ADD FOREIGN KEY (patient_id) REFERENCES patient(patient_id);
+ALTER TABLE hospitaldata.hospitalappointment
+ADD FOREIGN KEY (hospital_id) REFERENCES hospital(hospital_id);
+
+CREATE TABLE hospitaldata.hospitalassay (
+    hospital_id INT,      
+    patient_id INT,
+    assayresult VARCHAR(30),
+    PRIMARY KEY(hospital_id, patient_id)
+);
+ALTER TABLE hospitaldata.hospitalassay
+ADD FOREIGN KEY (patient_id) REFERENCES patient(patient_id);
+ALTER TABLE hospitaldata.hospitalassay
+ADD FOREIGN KEY (hospital_id) REFERENCES hospital(hospital_id);
+
+
+
+CREATE TABLE hospitaldata.hospitalvaccine (
+    hospital_id INT,      
+    patient_id INT,
+    vaccine_date DATE,
+    PRIMARY KEY(hospital_id, patient_id)
+);
+ALTER TABLE hospitaldata.hospitalvaccine
+ADD FOREIGN KEY (patient_id) REFERENCES patient(patient_id);
+ALTER TABLE hospitaldata.hospitalvaccine
+ADD FOREIGN KEY (hospital_id) REFERENCES hospital(hospital_id);
+
+CREATE TABLE hospitaldata.doctorsurgial (
+    doctor_id INT,      
+    patient_id INT,
+    operation_name VARCHAR(30),
+    PRIMARY KEY(doctor_id, patient_id)
+);
+ALTER TABLE hospitaldata.doctorsurgial
+ADD FOREIGN KEY (patient_id) REFERENCES patient(patient_id);
+ALTER TABLE hospitaldata.doctorsurgial
+ADD FOREIGN KEY (doctor_id) REFERENCES doctor(doctor_id);
+
+
+CREATE TABLE hospitaldata.doctorreports (
+    hospital_id INT,      
+    patient_id INT,
+    report_date DATE,
+    PRIMARY KEY(hospital_id, patient_id)
+);
+ALTER TABLE hospitaldata.doctorreports
+ADD FOREIGN KEY (patient_id) REFERENCES patient(patient_id);
+ALTER TABLE hospitaldata.doctorreports
+ADD FOREIGN KEY (hospital_id) REFERENCES hospital(hospital_id);
+
+
+
+CREATE TABLE hospitaldata.doctordiseases (
+    doctor_id INT,      
+    patient_id INT,
+    disease_name VARCHAR(30),
+    PRIMARY KEY(doctor_id, patient_id)
+);
+
+ALTER TABLE hospitaldata.doctordiseases
+ADD FOREIGN KEY (patient_id) REFERENCES patient(patient_id);
+ALTER TABLE hospitaldata.doctordiseases
+ADD FOREIGN KEY (doctor_id) REFERENCES doctor(doctor_id);
+
+
+CREATE TABLE hospitaldata.doctorprescriptions (
+    doctor_id INT,      
+    patient_id INT,
+    prescription_date DATE,
+    PRIMARY KEY(doctor_id, patient_id)
+);
+
+ALTER TABLE hospitaldata.doctorprescriptions
+ADD FOREIGN KEY (patient_id) REFERENCES patient(patient_id);
+ALTER TABLE hospitaldata.doctorprescriptions
+ADD FOREIGN KEY (doctor_id) REFERENCES doctor(doctor_id);
+
+CREATE TABLE hospitaldata.doctorvisits (
+    hospital_id INT,      
+    patient_id INT,
+    visit_date DATE,
+    PRIMARY KEY(hospital_id, patient_id)
+);
+
+ALTER TABLE hospitaldata.doctorvisits
+ADD FOREIGN KEY (patient_id) REFERENCES patient(patient_id);
+ALTER TABLE hospitaldata.doctorvisits
+ADD FOREIGN KEY (doctor_id) REFERENCES doctor(doctor_id);
+
+CREATE TABLE hospitaldata.doctorpatient (
+    doctor_id INT,      
+    patient_id INT,
+    diagnose_name VARCHAR(30),
+    PRIMARY KEY(doctor_id, patient_id)
+);
+ALTER TABLE hospitaldata.doctorpatient
+ADD FOREIGN KEY (patient_id) REFERENCES patient(patient_id);
+ALTER TABLE hospitaldata.doctorpatient
+ADD FOREIGN KEY (doctor_id) REFERENCES doctor(doctor_id);
+
+
+CREATE TABLE hospitaldata.patientallergies (
+    doctor_id INT,      
+    patient_id INT,
+    allergy_name VARCHAR(30),
+    PRIMARY KEY(doctor_id, patient_id)
+);
+ALTER TABLE hospitaldata.patientallergies
+ADD FOREIGN KEY (patient_id) REFERENCES patient(patient_id);
+ALTER TABLE hospitaldata.patientallergies
+ADD FOREIGN KEY (doctor_id) REFERENCES doctor(doctor_id);
+
+CREATE TABLE hospitaldata.patientdiseases (
+    doctor_id INT,      
+    patient_id INT,
+    disease_name VARCHAR(30),
+    PRIMARY KEY(doctor_id, patient_id)
+);
+
+ALTER TABLE hospitaldata.patientdiseases
+ADD FOREIGN KEY (patient_id) REFERENCES patient(patient_id);
+ALTER TABLE hospitaldata.patientdiseases
+ADD FOREIGN KEY (doctor_id) REFERENCES doctor(doctor_id);
+
+CREATE TABLE hospitaldata.patientappointment (
+    doctor_id INT,      
+    patient_id INT,
+    appointment_date DATE,
+    PRIMARY KEY(doctor_id, patient_id)
+);
+ALTER TABLE hospitaldata.patientappointment
+ADD FOREIGN KEY (patient_id) REFERENCES patient(patient_id);
+ALTER TABLE hospitaldata.patientappointment
+ADD FOREIGN KEY (doctor_id) REFERENCES doctor(doctor_id);
+
+
+CREATE TABLE hospitaldata.patientsurgial (
+    doctor_id INT,      
+    patient_id INT,
+    surgery_name VARCHAR(30),
+    PRIMARY KEY(doctor_id, patient_id)
+);
+
+ALTER TABLE hospitaldata.patientsurgial
+ADD FOREIGN KEY (patient_id) REFERENCES patient(patient_id);
+ALTER TABLE hospitaldata.patientsurgial
+ADD FOREIGN KEY (doctor_id) REFERENCES doctor(doctor_id);
+
+CREATE TABLE hospitaldata.prescriptiondrug (
+    doctor_id INT,      
+    patient_id INT,
+    drug_names VARCHAR(30),
+    PRIMARY KEY(doctor_id, patient_id)
+);
+ALTER TABLE hospitaldata.prescriptiondrug
+ADD FOREIGN KEY (patient_id) REFERENCES patient(patient_id);
+ALTER TABLE hospitaldata.prescriptiondrug
+ADD FOREIGN KEY (doctor_id) REFERENCES doctor(doctor_id);
+
+/*
+
+INSERT INTO Family_Doctor VALUES(454,NULL,NULL);
+INSERT INTO Drugs VALUES(565,NULL);
+INSERT INTO Patient VALUES(3897,'Hatice','Korkmaz','istanbul',165,65,'1931-08-30','Male',4534543,'A pozitif',21,454,565);
+
+SELECT *
+FROM Patient
+WHERE patient_id = 3897
